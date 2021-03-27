@@ -16,10 +16,20 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from blog import views
+from rest_framework import routers
 
+
+# router = routers.SimpleRouter()
+# # router.register(r'mix/', views.BlogViewMix)
+
+# app_name = 'blog'
 urlpatterns = [
+    path('api/v1/', include('blog.urls', namespace='api')),
+    path('api-auth/', include('rest_framework.urls')),
     #path('blog_pyweb', include('blog_pyweb.urls')),
-    path('', views.index),
+    #path('', views.index),
     path('admin/', admin.site.urls),
-
+    #path('', views.BlogListView.as_view(), name='blog-list'),
+    #path('mix/', views.BlogViewMix.as_view(), name='blog-mix'),
+    ## path('', include(router.urls)),
 ]

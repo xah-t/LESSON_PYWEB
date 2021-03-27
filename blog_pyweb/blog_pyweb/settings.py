@@ -37,6 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'rest_framework',
+
     'blog.apps.BlogConfig',
 ]
 
@@ -108,14 +111,21 @@ LANGUAGE_CODE = 'ru'
 
 TIME_ZONE = 'UTC'
 
-USE_I18N = True
+USE_I18N = True  # Включить систему перевода, так же для валидаторов DRF
 
-USE_L10N = True
+USE_L10N = True  # Включить форматирование для текущей локали
 
-USE_TZ = True
+USE_TZ = False  # Учитывать timezone(поставить Фолс)
 
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+"""создать сеттингс_локал, после включить этот кусок"""
+# try:
+#     from .settings_local import *
+# except ImportError:
+#     pass
