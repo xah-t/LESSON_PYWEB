@@ -1,7 +1,7 @@
 from datetime import datetime
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Tablo, Comment
+from .models import Tablo#, Comment
 
 
 class AuthorSerializer(serializers.ModelSerializer):
@@ -48,7 +48,7 @@ class TablosSerializer(serializers.ModelSerializer):
 class TabloDetailSerializer(serializers.ModelSerializer):
     """ Одна статья блога """
     author = AuthorSerializer(read_only=True)
-    comments = CommentsSerializer(many=True, read_only=True)
+#    comments = CommentsSerializer(many=True, read_only=True)
 
     class Meta:
         model = Tablo
@@ -74,7 +74,7 @@ class TabloEditorSerializer(serializers.ModelSerializer):
         read_only_fields = ['date_add', 'author', ]  # Только для чтения
 
 
-class NoteMiniSerializer(serializers.ModelSerializer):
+class TabloMiniSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tablo
         fields = ('id', 'title', )

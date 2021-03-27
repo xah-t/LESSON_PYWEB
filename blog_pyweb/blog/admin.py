@@ -1,3 +1,4 @@
+""" Настройка админки, документация: https://docs.djangoproject.com/en/3.1/ref/contrib/admin/ """
 from django.contrib import admin
 
 # Register your models here.
