@@ -10,7 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import NotFound
 
 from .models import Tablo#, Comment
-#from .serializers import NotesSerializer, NoteDetailSerializer, NoteEditorSerializer
+from .serializers import TablosSerializer, TabloDetailSerializer, TabloEditorSerializer
 
 # def index(request):
 #     return HttpResponse("Hello Web world!")
