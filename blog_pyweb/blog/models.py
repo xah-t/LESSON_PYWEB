@@ -33,6 +33,8 @@ class Tablo(models.Model):
 #     date_add = models.DateTimeField(auto_now=True, verbose_name='Время изменения')
 #     message = models.TextField(default='', blank=True, verbose_name='Текст комментария')
 #     rating = models.IntegerField(default=0, choices=RATINGS, verbose_name='Оценка')
+#
+#
 #     def __str__(self):
 #         # https://django.fun/docs/django/ru/3.1/ref/models/instances/#django.db.models.Model.get_FOO_display
 #         return f'{self.get_rating_display()}: {self.message or "Без комментариев"}'
