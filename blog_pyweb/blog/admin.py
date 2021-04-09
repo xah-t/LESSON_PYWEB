@@ -2,7 +2,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import Tablo#, Comment
+from .models import Tablo, Comment
 
 
 # Меняем формат вывода даты и времени только для РУССКОЙ локализации
@@ -33,6 +33,6 @@ class TabloAdmin(admin.ModelAdmin):
             obj.author = request.user
         super().save_model(request, obj, form, change)
 
-# @admin.register(Comment)
-# class CommentAdmin(admin.ModelAdmin):
-#     pass
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+    pass

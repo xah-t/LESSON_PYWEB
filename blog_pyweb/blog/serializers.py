@@ -1,7 +1,7 @@
 from datetime import datetime
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Tablo#, Comment
+from .models import Tablo, Comment
 
 
 class AuthorSerializer(serializers.ModelSerializer):
@@ -16,39 +16,39 @@ class TablosSerializer(serializers.ModelSerializer):
 
     # Меняем вывод, вместо `ID` пользователя будет `Имя`
     author = serializers.SlugRelatedField(slug_field='username', read_only=True)
-    #average_rating = serializers.DecimalField(max_digits=6, decimal_places=5)
+    average_rating = serializers.DecimalField(max_digits=6, decimal_places=5)
 
     class Meta:
         model = Tablo
-        fields = ['id', 'title', 'message', 'date_add', 'author', ]  # добавить 'average_rating', после включения в 19 строке
+        fields = ['id', 'title', 'message', 'date_add', 'author', 'average_rating', ]  # добавить 'average_rating', после включения в 19 строке
 
 
-# class CommentsSerializer(serializers.ModelSerializer):
-#     """ Комментарии и оценки. Используется в методе: `/note/{note_id}/` Статя блога """
-#     author = AuthorSerializer(read_only=True)
-#
-#     # Меняем название параметра в ответе
-#     comment_id = serializers.SerializerMethodField('get_comment_id')
-#     def get_comment_id(self, obj):
-#         return obj.pk
-#
-#     # Переопределяем параметр в ответе
-#     rating = serializers.SerializerMethodField('get_rating')
-#     def get_rating(self, obj):
-#         return {
-#             'value': obj.rating,
-#             'display': obj.get_rating_display()
-#         }
-#
-#     class Meta:
-#         model = Comment
-#         fields = ('comment_id', 'rating', 'message', 'date_add', 'author', )
-#
+class CommentsSerializer(serializers.ModelSerializer):
+    """ Комментарии и оценки. Используется в методе: `/note/{note_id}/` Статя блога """
+    author = AuthorSerializer(read_only=True)
+
+    # Меняем название параметра в ответе
+    comment_id = serializers.SerializerMethodField('get_comment_id')
+    def get_comment_id(self, obj):
+        return obj.pk
+
+    # Переопределяем параметр в ответе
+    rating = serializers.SerializerMethodField('get_rating')
+    def get_rating(self, obj):
+        return {
+            'value': obj.rating,
+            'display': obj.get_rating_display()
+        }
+
+    class Meta:
+        model = Comment
+        fields = ('comment_id', 'rating', 'message', 'date_add', 'author', )
+
 
 class TabloDetailSerializer(serializers.ModelSerializer):
     """ Одна статья блога """
     author = AuthorSerializer(read_only=True)
-#    comments = CommentsSerializer(many=True, read_only=True)
+    comments = CommentsSerializer(many=True, read_only=True)
 
     class Meta:
         model = Tablo
@@ -80,12 +80,12 @@ class TabloMiniSerializer(serializers.ModelSerializer):
         fields = ('id', 'title', )
 
 
-# class CommentAddSerializer(serializers.ModelSerializer):
-#     """ Добавление комментария """
-#     author = AuthorSerializer(read_only=True)
-#     note = TabloMiniSerializer(read_only=True)
-#
-#     class Meta:
-#         model = Comment
-#         fields = "__all__"
-#         read_only_fields = ['date_add', 'author', 'note']  # Только для чтения
+class CommentAddSerializer(serializers.ModelSerializer):
+    """ Добавление комментария """
+    author = AuthorSerializer(read_only=True)
+    note = TabloMiniSerializer(read_only=True)
+
+    class Meta:
+        model = Comment
+        fields = "__all__"
+        read_only_fields = ['date_add', 'author', 'note']  # Только для чтения

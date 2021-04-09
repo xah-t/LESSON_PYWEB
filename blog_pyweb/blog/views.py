@@ -2,14 +2,14 @@ from django.shortcuts import render
 
 # Create your views here.
 from django.http import HttpResponse
-#from django.db.models import Avg
+from django.db.models import Avg
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import NotFound
 
-from .models import Tablo#, Comment
+from .models import Tablo, Comment
 from .serializers import TablosSerializer, TabloDetailSerializer, TabloEditorSerializer
 
 # def index(request):
@@ -24,10 +24,10 @@ class TablosView(APIView):
 
        # # `select_related` - это оптимизация запроса (join). Отношение Один к Одному
        # # https://django.fun/docs/django/ru/3.1/ref/models/querysets/#select-related
-       #  notes = Note.objects.filter(public=True).order_by('-date_add', 'title').select_related('author')
+       #notes = Note.objects.filter(public=True).order_by('-date_add', 'title').select_related('author')
        #
        #  # Рассчитать средний рейтинг
-       #  notes = notes.annotate(average_rating=Avg('comments__rating'))
+        notes = notes.annotate(average_rating=Avg('comments__rating'))
 
         serializer = TablosSerializer(notes, many=True)
 
@@ -40,17 +40,17 @@ class TabloDetailView(APIView):
     def get(self, request, note_id):
         """ Получить статю """
         # Это не оптимальный запрос
-        note = Tablo.objects.filter(pk=note_id, public=True).first()
+        #note = Tablo.objects.filter(pk=note_id, public=True).first()
 
         # # `prefetch_related` - это оптимизация запроса для отношения Многие к Одному
         # # https://django.fun/docs/django/ru/3.1/ref/models/querysets/#prefetch-related
-        # note = Note.objects.select_related(
-        #     'author'
-        # ).prefetch_related(
-        #     'comments'
-        # ).filter(
-        #     pk=note_id, public=True
-        # ).first()
+        note = Note.objects.select_related(
+            'author'
+        ).prefetch_related(
+            'comments'
+        ).filter(
+            pk=note_id, public=True
+        ).first()
 
         if not note:
             raise NotFound(f'Опубликованная статья с id={note_id} не найдена')
@@ -98,26 +98,26 @@ class TabloEditorView(APIView):
             return Response(new_note.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# class CommentDetailView(APIView):
-#     """ Комментарий к статье """
-#     permission_classes = (IsAuthenticated, )
-#
-#     def post(self, request, note_id):
-#         """ Новый комментарий """
-#
-#         note = Note.objects.filter(pk=note_id).first()
-#         if not note:
-#             raise NotFound(f'Статья с id={note_id} не найдена')
-#
-#         new_comment = CommentAddSerializer(data=request.data)
-#         if new_comment.is_valid():
-#             new_comment.save(note=note, author=request.user)
-#             return Response(new_comment.data, status=status.HTTP_201_CREATED)
-#         else:
-#             return Response(new_comment.errors, status=status.HTTP_400_BAD_REQUEST)
-#
-#     def delete(self, request, comment_id):
-#         """ Удалить комментарий """
-#         comment = Comment.objects.filter(pk=comment_id, author=request.user)
-#         comment.delete()
-#         return Response(status=status.HTTP_204_NO_CONTENT)
+class CommentDetailView(APIView):
+    """ Комментарий к статье """
+    permission_classes = (IsAuthenticated, )
+
+    def post(self, request, note_id):
+        """ Новый комментарий """
+
+        note = Note.objects.filter(pk=note_id).first()
+        if not note:
+            raise NotFound(f'Статья с id={note_id} не найдена')
+
+        new_comment = CommentAddSerializer(data=request.data)
+        if new_comment.is_valid():
+            new_comment.save(note=note, author=request.user)
+            return Response(new_comment.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(new_comment.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, comment_id):
+        """ Удалить комментарий """
+        comment = Comment.objects.filter(pk=comment_id, author=request.user)
+        comment.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
